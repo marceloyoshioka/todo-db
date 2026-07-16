@@ -228,6 +228,51 @@ END;
 
 EXECUTE incluir_tarefa(3,'Organização Pessoal', 'Lavar as roupas',2,50,'Pendente');
 
+-- Função para Formatação de Exibição
+
+CREATE OR REPLACE FUNCTION obter_resumo_tarefa
+( p_ID IN TAREFA.ID%type ) 
+RETURN VARCHAR2            
+IS
+    v_DESCRICAO TAREFA.DESCRICAO%type;
+    v_STATUS TAREFA.STATUS%type;
+    v_MENSAGEM  VARCHAR2(255); 
+BEGIN
+    SELECT DESCRICAO, STATUS INTO v_DESCRICAO, v_STATUS FROM TAREFA WHERE ID = p_ID;
+    
+    v_MENSAGEM := 'Tarefa: ' || v_DESCRICAO || ' está ' || v_STATUS;
+    
+    RETURN v_MENSAGEM;
+END;
+
+SELECT obter_resumo_tarefa(3) FROM DUAL;
+
+-- Procedure que facilita a conclusão de uma tarefa
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE PROCEDURE concluir_tarefa
+(p_ID IN TAREFA.ID%type)
+IS
+    v_STATUS TAREFA.STATUS%type;
+    v_MENSAGEM VARCHAR2(255);
+BEGIN
+    SELECT STATUS INTO v_STATUS FROM TAREFA WHERE ID = p_ID;
+    IF v_STATUS = 'Pendente' THEN
+        UPDATE TAREFA SET STATUS = 'Concluída' WHERE ID = p_ID;
+        COMMIT;
+        dbms_output.put_line('Tarefa foi concluída');
+    ELSIF v_STATUS = 'Concluída' THEN
+        dbms_output.put_line('Tarefa já estava concluída');
+    ELSE
+        dbms_output.put_line('Não reconheci o status dessa tarefa');
+    END IF;
+END;
+
+EXECUTE concluir_tarefa(2);
+
+SELECT * FROM TAREFA;
+
+
 
 
 
