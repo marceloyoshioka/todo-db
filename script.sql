@@ -223,6 +223,7 @@ BEGIN
     INSERT INTO TAREFA
     VALUES
     (p_ID, p_TITULO, p_DESCRICAO, p_CATEGORIA, SYSDATE, p_TEMPO_ESTIMADO_MIN, p_STATUS, v_COMPLEXIDADE);
+    COMMIT;
 END;
 
 EXECUTE incluir_tarefa(3,'Organização Pessoal', 'Lavar as roupas',2,50,'Pendente');
